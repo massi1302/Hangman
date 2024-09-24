@@ -1,13 +1,14 @@
 package main
 
 import (
+	Hangman "Hangman/game"
 	"fmt"
-	"os"
+	"math/rand"
+	"time"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide a word list file")
-		os.Exit(1)
-	}
+	fmt.Println("Welcome to Hangman!")
+	rand.Seed(time.Now().UnixNano())
+	Hangman.PlayHangman()
 }
