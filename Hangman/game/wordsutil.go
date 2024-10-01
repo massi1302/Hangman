@@ -2,33 +2,33 @@ package Hangman
 
 import (
 	"fmt"
-	"io/ioutil"
 	"math/rand"
+	"os"
 	"time"
 )
 
-// ficher ou l'on lit les ficher txt
 func RandomWord(filename string) string {
-	rand.Seed(time.Now().UnixNano())
-	L := Reader(filename)
-	return L[rand.Intn(len(L))]
+	words := FileToStringArray(filename)
+	randomIndex := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(words))
+	return words[randomIndex]
 }
 
-func Reader(filename string) []string {
-	res := []string{}
-	content, error := ioutil.ReadFile("Data\\" + filename)
-	if error != nil {
-		fmt.Println("Error when opening file", error)
-
+func FileToStringArray(filename string) []string {
+	var res []string
+	content, err := os.ReadFile("Data\\" + filename)
+	if err != nil {
+		fmt.Println("Error when opening file", err)
 	}
 	temp := ""
 	for _, element := range string(content) {
-		if element != '\n' && element != '\r' {
+		if (element >= 'A' && element <= 'Z') || (element >= 'a' && element <= 'z') {
 			temp += string(element)
 		} else {
-			res = append(res, temp)
-			temp = ""
+			if len(temp) != 0 {
+				res = append(res, temp)
+				temp = ""
+			}
 		}
 	}
-	return res
+	return append(res, temp)
 }

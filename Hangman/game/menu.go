@@ -9,85 +9,89 @@ import (
 )
 
 const (
-	UP    = keyboard.KeyArrowUp
-	DOWN  = keyboard.KeyArrowDown
-	ENTER = keyboard.KeyEnter
+	OPTION_MENU_WIDTH = 159
+	OPTION_WIDTH      = 20
 )
 
-func AfficherMenu() int {
-	for {
+var options []string
+var optionsFunc map[string]func()
 
-		// Options de menu
-		options := []string{"   NEW GAME  ", " PRIVATE GAME", "SINGLE PLAYER"}
-		selectedOption := 0
-		if err := keyboard.Open(); err != nil {
+// []string{"NEW GAME", "PRIVATE GAME", "SINGLE PLAYER"}
+func init() {
+	options = []string{"EASY", "MEDIUM", "HARD", "EXIT"}
+	optionsFunc = make(map[string]func())
+	optionsFunc["EASY"] = func() {
+		PlayHangman(RandomWord("words.txt"))
+	}
+	optionsFunc["MEDIUM"] = func() {
+		// PlayHangman(RandomWord("medium_words.txt"))
+	}
+	optionsFunc["HARD"] = func() {
+		// PlayHangman(RandomWord("hard_words.txt"))
+	}
+	optionsFunc["EXIT"] = func() {
+		os.Exit(0)
+	}
+}
+
+func AfficherMenu() string {
+	if err := keyboard.Open(); err != nil {
+		panic(err)
+	}
+	defer func() {
+		err := keyboard.Close()
+		if err != nil {
 			panic(err)
 		}
-		defer keyboard.Close()
+	}()
+	for {
+		selectedOption := 0
 		for {
+			ClearConsole()
 			fmt.Print("\033[2J")
 			fmt.Print("\033[H")
-
 			AfficherTitre()
-
 			for i, option := range options {
 				if i == selectedOption {
-					fmt.Println(Blanc(Center(fmt.Sprintf("                                                                       ┌─────────────────┐"), 80)))
-					fmt.Println(Blanc(Center(fmt.Sprintf("                                                                    >> │ %s   │ <<", option), 80)))
-					fmt.Println(Blanc(Center(fmt.Sprintf("                                                                       └─────────────────┘"), 80)))
+					fmt.Println(Blanc(centerString(fmt.Sprintf("┌%s┐", strings.Repeat("─", OPTION_WIDTH-2)), OPTION_MENU_WIDTH)))
+					fmt.Println(Blanc(centerString(">> "+fmt.Sprintf("│%s│", centerString(option, OPTION_WIDTH-2))+" <<", OPTION_MENU_WIDTH)))
+					fmt.Println(Blanc(centerString(fmt.Sprintf("└%s┘", strings.Repeat("─", OPTION_WIDTH-2)), OPTION_MENU_WIDTH)))
 				} else {
-					fmt.Println(Blanc(Center("                                                                       ┌─────────────────┐", 80)))
-					fmt.Println(Blanc(Center(fmt.Sprintf("                                                                       │ %s   │", option), 80)))
-					fmt.Println(Blanc(Center("                                                                       └─────────────────┘", 80)))
+					fmt.Println(Blanc(centerString(fmt.Sprintf("┌%s┐", strings.Repeat("─", OPTION_WIDTH-2)), OPTION_MENU_WIDTH)))
+					fmt.Println(Blanc(centerString(fmt.Sprintf("│%s│", centerString(option, OPTION_WIDTH-2)), OPTION_MENU_WIDTH)))
+					fmt.Println(Blanc(centerString(fmt.Sprintf("└%s┘", strings.Repeat("─", OPTION_WIDTH-2)), OPTION_MENU_WIDTH)))
 				}
-				if i < len(options)-1 {
+				if i < len(optionsFunc)-1 {
 					fmt.Println()
 				}
 			}
 
 			fmt.Println(strings.Repeat("\n", 2))
 
-			char, key, err := keyboard.GetKey()
+			_, key, err := keyboard.GetKey()
 			if err != nil {
 				panic(err)
 			}
 
 			switch key {
-			case UP:
-				if selectedOption > 0 {
-					selectedOption--
-				}
-			case DOWN:
-				if selectedOption < len(options)-1 {
-					selectedOption++
-				}
-			case ENTER:
-				return selectedOption + 1
-			case keyboard.KeyEsc:
-				os.Exit(0)
+			case keyboard.KeyArrowUp:
+				selectedOption = (selectedOption + len(optionsFunc) - 1) % len(optionsFunc)
+			case keyboard.KeyArrowDown:
+				selectedOption = (selectedOption + 1) % len(optionsFunc)
+			case keyboard.KeyEnter:
+				optionsFunc[options[selectedOption]]()
 			default:
-				if char == 'q' || char == 'Q' {
-					os.Exit(0)
-				}
 			}
 		}
 	}
 }
 
-// Center centers a string within a given width.
-func Center(s string, width int) string {
-	if len(s) >= width {
-		return s
-	}
-	padding := (width - len(s)) / 2
-	return strings.Repeat(" ", padding) + s + strings.Repeat(" ", width-len(s)-padding)
+func centerString(str string, width int) string {
+	strArr := []rune(str)
+	spaces := int(float64(width-len(strArr)) / 2)
+	return strings.Repeat(" ", spaces) + str + strings.Repeat(" ", width-(spaces+len(strArr)))
 }
 
-func Titre() {
-	AfficherMenu()
-}
-
-// Fonction pour créer du texte blanc
-func Blanc(texte string) string {
-	return "\033[37m" + texte + "\033[0m"
+func Blanc(str string) string {
+	return "\033[37m" + str + "\033[0m"
 }
