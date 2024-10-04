@@ -21,13 +21,13 @@ func gameInit() {
 	options = []string{"EASY", "MEDIUM", "HARD", "EXIT"}
 	optionsFunc = make(map[string]func())
 	optionsFunc["EASY"] = func() {
-		PlayHangman(RandomWord("easy_words.txt"))
+		PlayHangman(RandomWord("easy_words.txt"), 2)
 	}
 	optionsFunc["MEDIUM"] = func() {
-		PlayHangman(RandomWord("medium_words.txt"))
+		PlayHangman(RandomWord("medium_words.txt"), 1)
 	}
 	optionsFunc["HARD"] = func() {
-		PlayHangman(RandomWord("hard_words.txt"))
+		PlayHangman(RandomWord("hard_words.txt"), 0)
 	}
 	optionsFunc["EXIT"] = func() {
 		ClearConsole()
@@ -35,11 +35,11 @@ func gameInit() {
 	}
 }
 
-func AfficherMenu(wordlist string) string {
+func AfficherMenu(wordlist string, nbletterstoreveal int8) string {
 	if wordlist == "" {
 		gameInit()
 	} else {
-		PlayHangman(RandomWord(wordlist))
+		PlayHangman(RandomWord(wordlist), nbletterstoreveal)
 	}
 
 	if err := keyboard.Open(); err != nil {

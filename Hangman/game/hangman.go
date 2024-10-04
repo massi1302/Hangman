@@ -2,6 +2,7 @@ package Hangman
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"time"
 )
@@ -10,9 +11,12 @@ const (
 	GAME_WIDTH = 150 // Reduced width for better centering
 )
 
-func PlayHangman(word string) {
+func PlayHangman(word string, nbletterstoreveal int8) {
 	ClearConsole()
-
+	if nbletterstoreveal < 0 || nbletterstoreveal > 2 {
+		MessageRapide("Please enter a number between 0 and 2.", 50, "rouge")
+		return
+	}
 	lives := 10
 	blanks := make([]string, len([]rune(word)))
 	for i := range len([]rune(word)) {
@@ -20,6 +24,15 @@ func PlayHangman(word string) {
 	}
 	usedLetters := make(map[rune]bool)
 	var usedLettersList []string
+	previousint := -1
+	for i := 0; i < int(nbletterstoreveal); i++ {
+		randomint := rand.Intn(len([]rune(word)) - 1)
+		for previousint == randomint {
+			randomint = rand.Intn(len([]rune(word)) - 1)
+		}
+		previousint = randomint
+		blanks[randomint] = string([]rune(word)[randomint])
+	}
 
 	for lives > 0 && word != strings.Join(blanks, "") {
 		time.Sleep(1 * time.Second)
@@ -64,6 +77,23 @@ func PlayHangman(word string) {
 		var input string
 		fmt.Scanln(&input)
 		input = strings.ToLower(input)
+		if len(input) > 1 {
+			if word == input {
+				fmt.Println()
+				resultStr := fmt.Sprintf("🎉 Congratulations! You won with %d lives remaining! 🎉", lives)
+				fmt.Println(Vert(centerString(resultStr, GAME_WIDTH)))
+				fmt.Println(Vert(centerString(fmt.Sprintf("The word was: %s", word), GAME_WIDTH)))
+				break
+			} else {
+				lives -= 2
+				MessageRapide("❌ Incorrect guess!", 50, "rouge")
+				continue
+			}
+		}
+		if !((input >= "A" && input <= "Z") || (input >= "a" && input <= "z")) {
+			MessageRapide("Please enter a single letter.", 50, "rouge")
+			continue
+		}
 
 		if len(input) != 1 {
 			MessageRapide("Please enter a single letter.", 50, "rouge")
@@ -95,7 +125,8 @@ func PlayHangman(word string) {
 		}
 	}
 
-	time.Sleep(2 * time.Second)
+	fmt.Print("Appuyez sur une touche pour continuer...")
+	fmt.Scanln()
 	ClearConsole()
 
 	// Display final result
