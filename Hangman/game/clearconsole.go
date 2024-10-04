@@ -9,17 +9,9 @@ import (
 var clearFuncs map[string]func()
 
 func init() {
-	clearFuncs = make(map[string]func()) //Initialize it
-	clearFuncs["linux"] = func() {
-		cmd := exec.Command("clearFuncs") //Linux example, its tested
-		cmd.Stdout = os.Stdout
-		err := cmd.Run()
-		if err != nil {
-			return
-		}
-	}
+	clearFuncs = make(map[string]func())
 	clearFuncs["windows"] = func() {
-		cmd := exec.Command("cmd", "/c", "cls") //Windows example, its tested
+		cmd := exec.Command("cmd", "/c", "cls")
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	}

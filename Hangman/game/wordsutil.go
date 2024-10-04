@@ -15,7 +15,13 @@ func RandomWord(filename string) string {
 
 func FileToStringArray(filename string) []string {
 	var res []string
-	content, err := os.ReadFile("Data\\" + filename)
+	var content []byte
+	var err error
+	if FileExists("Data\\" + filename) {
+		content, err = os.ReadFile("Data\\" + filename)
+	} else {
+		content, err = os.ReadFile(filename)
+	}
 	if err != nil {
 		fmt.Println("Error when opening file", err)
 	}

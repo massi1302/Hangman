@@ -17,24 +17,31 @@ var options []string
 var optionsFunc map[string]func()
 
 // []string{"NEW GAME", "PRIVATE GAME", "SINGLE PLAYER"}
-func init() {
+func gameInit() {
 	options = []string{"EASY", "MEDIUM", "HARD", "EXIT"}
 	optionsFunc = make(map[string]func())
 	optionsFunc["EASY"] = func() {
-		PlayHangman(RandomWord("words.txt"))
+		PlayHangman(RandomWord("easy_words.txt"))
 	}
 	optionsFunc["MEDIUM"] = func() {
-		// PlayHangman(RandomWord("medium_words.txt"))
+		PlayHangman(RandomWord("medium_words.txt"))
 	}
 	optionsFunc["HARD"] = func() {
-		// PlayHangman(RandomWord("hard_words.txt"))
+		PlayHangman(RandomWord("hard_words.txt"))
 	}
 	optionsFunc["EXIT"] = func() {
+		ClearConsole()
 		os.Exit(0)
 	}
 }
 
-func AfficherMenu() string {
+func AfficherMenu(wordlist string) string {
+	if wordlist == "" {
+		gameInit()
+	} else {
+		PlayHangman(RandomWord(wordlist))
+	}
+
 	if err := keyboard.Open(); err != nil {
 		panic(err)
 	}
@@ -94,4 +101,9 @@ func centerString(str string, width int) string {
 
 func Blanc(str string) string {
 	return "\033[37m" + str + "\033[0m"
+}
+
+func FileExists(fileName string) bool {
+	_, err := os.Stat(fileName)
+	return err == nil
 }
