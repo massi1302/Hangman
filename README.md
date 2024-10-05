@@ -109,10 +109,6 @@ Les contributions sont les bienvenues ! Pour contribuer :
 4. Poussez vers la branche
 5. Ouvrez une Pull Request
 
-## 📝 Licence
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
-
----
 
 Développé avec ❤️ et Go
