@@ -8,7 +8,7 @@ livre
 sac
 pain
 feu
-vélo
+velo
 stylo
 nez
 fleur

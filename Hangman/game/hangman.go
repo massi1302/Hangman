@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	GAME_WIDTH = 150 // Reduced width for better centering
+	GAME_WIDTH = 155
 )
 
 func PlayHangman(word string, nbletterstoreveal int8) {
@@ -72,7 +72,7 @@ func PlayHangman(word string, nbletterstoreveal int8) {
 		}
 
 		// Input prompt - adjusted to remove extra space
-		fmt.Print(Vert(centerString("Enter a letter: ", GAME_WIDTH/2)))
+		fmt.Print(Vert(centerString("Enter a letter or a word ", GAME_WIDTH/2)))
 
 		var input string
 		fmt.Scanln(&input)
@@ -125,7 +125,7 @@ func PlayHangman(word string, nbletterstoreveal int8) {
 		}
 	}
 
-	fmt.Print("Appuyez sur une touche pour continuer...")
+	fmt.Print("Press Enter to continue...")
 	fmt.Scanln()
 	ClearConsole()
 
@@ -139,10 +139,22 @@ func PlayHangman(word string, nbletterstoreveal int8) {
 		fmt.Println(Vert(centerString(fmt.Sprintf("The word was: %s", word), GAME_WIDTH)))
 	} else {
 		// Game over display
-
-		fmt.Println(Rouge(centerString(fmt.Sprintf("The word was: %s", word), GAME_WIDTH)))
+		if word != strings.Join(blanks, "") {
+			ClearConsole()
+			fmt.Println()
+			fmt.Println(Rouge(centerString(`
+								┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+								┃      GAME  OVER !        ┃
+								┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛`, GAME_WIDTH)))
+			fmt.Println()
+			fmt.Println(Blanc(centerString("The word was:", GAME_WIDTH)))
+			fmt.Println(Rouge(centerString(word, GAME_WIDTH)))
+			fmt.Println()
+			fmt.Println(Blanc(centerString("Press Enter to continue...", GAME_WIDTH)))
+			fmt.Scanln()
+		}
 	}
 
 	// Wait before returning to menu
-	time.Sleep(5 * time.Second)
+	time.Sleep(2 * time.Second)
 }

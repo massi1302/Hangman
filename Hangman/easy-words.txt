@@ -1,3 +1,6 @@
+hello 
+world
+golang
 lune
 pomme
 chat
@@ -5,7 +8,7 @@ livre
 sac
 pain
 feu
-vélo
+velo
 stylo
 nez
 fleur
