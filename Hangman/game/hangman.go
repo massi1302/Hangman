@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	GAME_WIDTH = 155
+	GAME_WIDTH = 154
 )
 
 func PlayHangman(word string, nbletterstoreveal int8) {
